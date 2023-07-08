@@ -85,6 +85,7 @@ async function listAllFiles(
 			listeners: {
 				stdout: (data) => (out += data.toString()),
 			},
+			silent: true,
 		},
 	);
 	const cwd = process.cwd();
