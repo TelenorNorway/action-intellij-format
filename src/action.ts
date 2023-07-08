@@ -52,6 +52,7 @@ async function format(args: string[], files: string[]) {
 	await exec("idea" + ideaExecExt(), ["format", ...args, ...files], {
 		listeners: { stdout: (data) => (out += data.toString()) },
 		silent: true,
+		ignoreReturnCode: true,
 	});
 
 	for (const line of out.split(/\r?\n/g)) {
