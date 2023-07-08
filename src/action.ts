@@ -22,32 +22,32 @@ export default async function action() {
 
 	if (ignored.length) {
 		debug(
-			`Ignored well (${ignored.length})\n${ignored
-				.map((path) => path + "\n")
+			` Ignored (${ignored.length})\n${ignored
+				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
 	}
 
 	if (formatted.length) {
 		debug(
-			`Formatted well (${formatted.length})\n${formatted
-				.map((path) => path + "\n")
+			` Formatted well (${formatted.length})\n${formatted
+				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
 	}
 
 	if (skipped.length) {
 		debug(
-			`Skipped (${skipped.length})\n${skipped
-				.map((path) => path + "\n")
+			` Skipped (${skipped.length})\n${skipped
+				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
 	}
 
 	if (failed.length) {
 		error(
-			`Failed (${failed.length})\n${failed
-				.map((path) => path + "\n")
+			` Failed (${failed.length})\n${failed
+				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
 
