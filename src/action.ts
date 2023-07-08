@@ -3,6 +3,7 @@ import { exec } from "@actions/exec";
 import { existsSync } from "node:fs";
 import { type } from "node:os";
 import { join, resolve } from "node:path";
+import { start } from "node:repl";
 
 export default async function action() {
 	const settings = resolveSettings();
@@ -21,7 +22,7 @@ export default async function action() {
 		debug(
 			`Formatted well (${formatted.length})\n${formatted
 				.map((path) => path + "\n")
-				.join()}`,
+				.join("")}`,
 		);
 	}
 
@@ -29,13 +30,15 @@ export default async function action() {
 		debug(
 			`Skipped (${skipped.length})\n${skipped
 				.map((path) => path + "\n")
-				.join()}`,
+				.join("")}`,
 		);
 	}
 
 	if (failed.length) {
 		error(
-			`Failed (${failed.length})\n${failed.map((path) => path + "\n").join()}`,
+			`Failed (${failed.length})\n${failed
+				.map((path) => path + "\n")
+				.join("")}`,
 		);
 
 		setFailed(new Error("Some files are not formatted!"));
@@ -55,18 +58,19 @@ async function format(args: string[], files: string[]) {
 		ignoreReturnCode: true,
 	});
 
+	const startIndex = 9 + process.cwd().length;
 	for (const line of out.split(/\r?\n/g)) {
 		if (!line.startsWith("Checking ")) continue;
 		if (line.endsWith("...Needs reformatting")) {
-			failed.push(line.slice(9, -21));
+			failed.push(line.slice(startIndex, -21));
 			continue;
 		} else if (line.endsWith("...Formatted well")) {
-			formatted.push(line.slice(9, -17));
+			formatted.push(line.slice(startIndex, -17));
 			continue;
 		}
 		const skippedIndex = line.lastIndexOf("...Skipped,");
 		if (skippedIndex === -1) continue;
-		skipped.push(line.slice(9, skippedIndex));
+		skipped.push(line.slice(startIndex, skippedIndex));
 	}
 
 	return { formatted, skipped, failed };
