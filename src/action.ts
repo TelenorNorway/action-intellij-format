@@ -3,7 +3,6 @@ import { exec } from "@actions/exec";
 import { existsSync } from "node:fs";
 import { type } from "node:os";
 import { join, resolve } from "node:path";
-import { start } from "node:repl";
 
 export default async function action() {
 	const settings = resolveSettings();
@@ -13,10 +12,21 @@ export default async function action() {
 	if (settings) args.push("-s", settings);
 	else args.push("-allowDefaults");
 
+	const [included, ignored] = await listAllFiles();
+
+	const cwd = process.cwd();
 	const { formatted, skipped, failed } = await format(
 		args,
-		await listAllFiles(),
+		included.map((name) => join(cwd, name)),
 	);
+
+	if (ignored.length) {
+		debug(
+			`Ignored well (${ignored.length})\n${ignored
+				.map((path) => path + "\n")
+				.join("")}`,
+		);
+	}
 
 	if (formatted.length) {
 		debug(
@@ -97,19 +107,18 @@ async function listAllFiles(
 			silent: true,
 		},
 	);
-	const cwd = process.cwd();
-	return out
-		.trim()
-		.split(/[\r\n\t]+/g)
-		.filter((name) => {
-			if (ignorePattern.test(name)) {
-				debug("Ignoring " + name);
-				return false;
-			}
-			return true;
-		})
-		.map((name) => join(cwd, name))
-		.filter(existsSync);
+
+	const ignored: string[] = [];
+	const included: string[] = [];
+
+	for (const name of out.trim().split(/[\r\n\t]+/g)) {
+		if (ignorePattern.test(name)) {
+			ignored.push(name);
+		} else {
+			included.push(name);
+		}
+	}
+	return [included, ignored];
 }
 
 function resolveSettings() {
