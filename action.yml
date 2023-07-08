@@ -1,6 +1,11 @@
-name: "My Node Action"
-description: |
-  An action that runs with node.
+name: action-intellij-format
+description: Validates your code according to IntelliJ IDEA Format
+inputs:
+  settings:
+    description: |
+      A path to the codeStyle.xml you want to use. If not provided, the action will look for `.idea/codeStyles/Project.xml`. If that doesn't exist either, the action will default to IntelliJ IDEA standards.
+    required: false
+    default: ""
 runs:
   using: "node16"
   main: "dist/main.js"
