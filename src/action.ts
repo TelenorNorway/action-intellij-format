@@ -99,6 +99,7 @@ async function listAllFiles(
 	);
 	const cwd = process.cwd();
 	return out
+		.trim()
 		.split(/[\r\n\t]+/g)
 		.filter((name) => {
 			if (!ignorePattern.test(name)) {
