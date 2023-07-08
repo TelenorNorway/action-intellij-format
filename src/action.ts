@@ -102,7 +102,7 @@ async function listAllFiles(
 		.trim()
 		.split(/[\r\n\t]+/g)
 		.filter((name) => {
-			if (!ignorePattern.test(name)) {
+			if (ignorePattern.test(name)) {
 				debug("Ignoring " + name);
 				return false;
 			}
