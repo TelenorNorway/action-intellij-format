@@ -47,9 +47,9 @@ export default async function action() {
 }
 
 async function format(args: string[], files: string[]) {
-	const skipped: string[] = [];
-	const formatted: string[] = [];
-	const failed: string[] = [];
+	const skipped = new Set<string>();
+	const formatted = new Set<string>();
+	const failed = new Set<string>();
 
 	let out = "";
 	await exec("idea" + ideaExecExt(), ["format", ...args, ...files], {
@@ -58,22 +58,26 @@ async function format(args: string[], files: string[]) {
 		ignoreReturnCode: true,
 	});
 
-	const startIndex = 9 + process.cwd().length;
+	const startIndex = 10 + process.cwd().length;
 	for (const line of out.split(/\r?\n/g)) {
 		if (!line.startsWith("Checking ")) continue;
 		if (line.endsWith("...Needs reformatting")) {
-			failed.push(line.slice(startIndex, -21));
+			failed.add(line.slice(startIndex, -21));
 			continue;
 		} else if (line.endsWith("...Formatted well")) {
-			formatted.push(line.slice(startIndex, -17));
+			formatted.add(line.slice(startIndex, -17));
 			continue;
 		}
 		const skippedIndex = line.lastIndexOf("...Skipped,");
 		if (skippedIndex === -1) continue;
-		skipped.push(line.slice(startIndex, skippedIndex));
+		skipped.add(line.slice(startIndex, skippedIndex));
 	}
 
-	return { formatted, skipped, failed };
+	return {
+		formatted: [...formatted],
+		skipped: [...skipped],
+		failed: [...failed],
+	};
 }
 
 async function listAllFiles(
@@ -95,7 +99,7 @@ async function listAllFiles(
 	);
 	const cwd = process.cwd();
 	return out
-		.split(/\s+/g)
+		.split(/(\s\r\n\t)+/g)
 		.filter((name) => !ignorePattern.test(name))
 		.map((name) => join(cwd, name))
 		.filter(existsSync);
