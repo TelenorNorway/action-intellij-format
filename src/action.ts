@@ -17,21 +17,30 @@ export default async function action() {
 		await listAllFiles(),
 	);
 
-	debug(
-		`Formatted well (${formatted.length})\n${formatted
-			.map((path) => path + "\n")
-			.join()}`,
-	);
+	if (formatted.length) {
+		debug(
+			`Formatted well (${formatted.length})\n${formatted
+				.map((path) => path + "\n")
+				.join()}`,
+		);
+	}
 
-	debug(
-		`Skipped (${skipped.length})\n${skipped.map((path) => path + "\n").join()}`,
-	);
+	if (skipped.length) {
+		debug(
+			`Skipped (${skipped.length})\n${skipped
+				.map((path) => path + "\n")
+				.join()}`,
+		);
+	}
 
-	error(
-		`Failed (${failed.length})\n${failed.map((path) => path + "\n").join()}`,
-	);
+	if (failed.length) {
+		error(
+			`Failed (${failed.length})\n${failed.map((path) => path + "\n").join()}`,
+		);
 
-	setFailed(new Error("Some files are not formatted!"));
+		setFailed(new Error("Some files are not formatted!"));
+		process.exit(1);
+	}
 }
 
 async function format(args: string[], files: string[]) {
@@ -42,6 +51,7 @@ async function format(args: string[], files: string[]) {
 	let out = "";
 	await exec("idea" + ideaExecExt(), ["format", ...args, ...files], {
 		listeners: { stdout: (data) => (out += data.toString()) },
+		silent: true,
 	});
 
 	for (const line of out.split(/\r?\n/g)) {
