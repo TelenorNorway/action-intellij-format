@@ -100,7 +100,13 @@ async function listAllFiles(
 	const cwd = process.cwd();
 	return out
 		.split(/(\s\r\n\t)+/g)
-		.filter((name) => !ignorePattern.test(name))
+		.filter((name) => {
+			if (!ignorePattern.test(name)) {
+				debug("Ignoring " + name);
+				return false;
+			}
+			return true;
+		})
 		.map((name) => join(cwd, name))
 		.filter(existsSync);
 }
