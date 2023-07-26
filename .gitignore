@@ -1,12 +1,13 @@
 *
 !/**/
-!/.github/workflows/ci.yml
+!/.github/workflows/*.yml
 !/.vscode/extensions.json
 !/.vscode/settings.json
 !/src/**/*.ts
 !/test/**/*.ts
 !/.eslintrc.cjs
 !/.gitignore
+!/release.gitignore
 !/.prettierignore
 !/.prettierrc.json
 !/action.yml
