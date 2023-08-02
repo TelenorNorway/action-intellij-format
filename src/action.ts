@@ -22,7 +22,7 @@ export default async function action() {
 
 	if (ignored.length) {
 		debug(
-			` Ignored (${ignored.length})\n${ignored
+			`Ignored (${ignored.length})\n${ignored
 				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
@@ -30,7 +30,7 @@ export default async function action() {
 
 	if (formatted.length) {
 		debug(
-			` Formatted well (${formatted.length})\n${formatted
+			`Formatted well (${formatted.length})\n${formatted
 				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
@@ -38,7 +38,7 @@ export default async function action() {
 
 	if (skipped.length) {
 		debug(
-			` Skipped (${skipped.length})\n${skipped
+			`Skipped (${skipped.length})\n${skipped
 				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
@@ -46,12 +46,12 @@ export default async function action() {
 
 	if (failed.length) {
 		error(
-			` Failed (${failed.length})\n${failed
+			`Failed (${failed.length})\n${failed
 				.map((path) => "   " + path + "\n")
 				.join("")}`,
 		);
 
-		setFailed(new Error("Some files are not formatted!"));
+		setFailed("Some files are not formatted!");
 		process.exit(1);
 	}
 }
