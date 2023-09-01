@@ -63,7 +63,13 @@ async function format(args: string[], files: string[]) {
 
 	let out = "";
 	await exec("idea" + ideaExecExt(), ["format", ...args, ...files], {
-		listeners: { stdout: (data) => (out += data.toString()) },
+		listeners: {
+			stdout: (data) => {
+				const str = data.toString();
+				out += str;
+				debug(str);
+			},
+		},
 		silent: true,
 		ignoreReturnCode: true,
 	});
