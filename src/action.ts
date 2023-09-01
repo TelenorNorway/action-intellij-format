@@ -62,9 +62,19 @@ async function format(args: string[], files: string[]) {
 	const failed = new Set<string>();
 
 	let out = "";
+	debug(
+		`$ ${["idea" + ideaExecExt(), "format", ...args, ...files]
+			.map((s) => `'${s}'`)
+			.join(" ")}`,
+	);
 	await exec("idea" + ideaExecExt(), ["format", ...args, ...files], {
 		listeners: {
 			stdout: (data) => {
+				const str = data.toString();
+				out += str;
+				debug(str);
+			},
+			stderr: (data) => {
 				const str = data.toString();
 				out += str;
 				debug(str);
